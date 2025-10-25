@@ -1,0 +1,35 @@
+:root{
+  --bg:#03040a; --panel:#071228; --card:#08142b; --muted:#9fb0c8; --accent:#06b6d4; --accent2:#7c3aed; --glass:rgba(255,255,255,0.03);
+  --text:#e6f0fb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#020312,#071022);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+.wrap{display:flex;min-height:100vh;max-width:1200px;margin:24px auto;padding:16px;gap:18px}
+.sidebar{width:320px;background:linear-gradient(180deg,#071228,#061223);border-radius:12px;padding:16px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
+.brand-text h1{margin:0;font-size:1.05rem}
+.sub{margin:4px 0 0 0;color:var(--muted);font-size:0.85rem}
+.nav input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text)}
+.filters{margin-top:10px;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:0.9rem}
+.nav-list{margin-top:12px;max-height:60vh;overflow:auto}
+.index-item{padding:8px;border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
+.index-item:hover{background:rgba(255,255,255,0.02)}
+.sidefoot{margin-top:12px;color:var(--muted);font-size:0.85rem;text-align:center}
+
+/* main */
+.main{flex:1}
+.mainhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card{background:linear-gradient(180deg,#06112a,#041022);padding:18px;border-radius:12px;box-shadow:0 12px 36px rgba(2,6,23,0.5)}
+.content .lead{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.tile{background:linear-gradient(135deg,rgba(6,182,212,0.06),rgba(124,58,237,0.03));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+.tile h3{margin:0}
+.meta{color:var(--muted);font-size:0.9rem;margin-top:6px}
+.content-body{margin-top:12px}
+.card article{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+.ghost{background:transparent;border:1px dashed rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
+@media (max-width:900px){
+  .wrap{flex-direction:column;padding:12px}
+  .sidebar{width:100%}
+}

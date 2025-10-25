@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>code is for medicine — Tech Medical Encyclopedia</title>
+  <meta name="description" content="code is for medicine — a technology-styled medical encyclopedia. Educational resource." />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">CM</div><div class="brand-text"><h1>code is for medicine</h1><p class="sub">Tech Medical Encyclopedia</p></div></div>
+      <nav class="nav">
+        <input id="searchInput" placeholder="Search medical knowledge..." aria-label="search" />
+        <div class="filters">
+          <label><input type="checkbox" class="typefilter" value="organelle" checked /> Organelles</label>
+          <label><input type="checkbox" class="typefilter" value="disease" checked /> Diseases</label>
+          <label><input type="checkbox" class="typefilter" value="drug" checked /> Drugs</label>
+          <label><input type="checkbox" class="typefilter" value="concept" checked /> Concepts</label>
+        </div>
+        <div class="nav-list" id="indexList"></div>
+      </nav>
+      <footer class="sidefoot">
+        <small>Educational — not medical advice.</small>
+      </footer>
+    </aside>
+
+    <main class="main">
+      <header class="mainhead">
+        <div class="breadcrumbs" id="breadcrumbs">Home</div>
+        <div id="controls"><button id="viewAll" class="ghost">View All</button> <button id="exportBtn" class="ghost">Export Results</button></div>
+      </header>
+
+      <section id="content" class="content card">
+        <h2>Welcome — code is for medicine</h2>
+        <p class="lead">A technology-styled, searchable medical encyclopedia. Use the search box or browse the index on the left. This static site includes a curated dataset and client-side search so you can host it directly on GitHub Pages.</p>
+        <div class="grid" id="featured"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{
+  "entries": [
+    {
+      "id": "mitochondrion",
+      "type": "organelle",
+      "title": "Mitochondrion",
+      "summary": "Energy-producing organelle found in most eukaryotic cells. Site of oxidative phosphorylation and ATP production.",
+      "content": "<h3>Structure</h3><p>Mitochondria have a double membrane with folded cristae; they contain their own DNA.</p><h3>Function</h3><p>Produce ATP, regulate apoptosis, and maintain metabolic homeostasis.</p><h3>Clinical relevance</h3><p>Mitochondrial dysfunction underlies metabolic disorders and neurodegeneration.</p>",
+      "tags": [
+        "energy",
+        "ATP",
+        "respiration",
+        "apoptosis"
+      ]
+    },
+    {
+      "id": "nucleus",
+      "type": "organelle",
+      "title": "Nucleus",
+      "summary": "Membrane-bound organelle that stores the cell's genetic material and coordinates gene expression.",
+      "content": "<h3>Structure</h3><p>Double-membrane nuclear envelope with nuclear pores; contains chromatin and nucleolus.</p><h3>Function</h3><p>Houses DNA, regulates transcription, and assembles ribosomal subunits.</p>",
+      "tags": [
+        "DNA",
+        "chromatin",
+        "transcription"
+      ]
+    },
+    {
+      "id": "lysosome",
+      "type": "organelle",
+      "title": "Lysosome",
+      "summary": "Acidic organelle containing hydrolytic enzymes for intracellular degradation and recycling.",
+      "content": "<h3>Function</h3><p>Degrades macromolecules from endocytosis and autophagy; defects cause lysosomal storage diseases.</p>",
+      "tags": [
+        "degradation",
+        "autophagy",
+        "enzymes"
+      ]
+    },
+    {
+      "id": "diabetes_mellitus",
+      "type": "disease",
+      "title": "Diabetes Mellitus",
+      "summary": "A group of metabolic disorders characterized by high blood glucose due to defects in insulin secretion, action, or both.",
+      "content": "<h3>Types</h3><p>Type 1 (autoimmune beta-cell destruction) and Type 2 (insulin resistance and beta-cell dysfunction).</p><h3>Management</h3><p>Diet, exercise, glucose monitoring, and medications (insulin, metformin, etc.).</p>",
+      "tags": [
+        "endocrine",
+        "metabolic",
+        "glucose",
+        "insulin"
+      ]
+    },
+    {
+      "id": "aspirin",
+      "type": "drug",
+      "title": "Aspirin (Acetylsalicylic acid)",
+      "summary": "Nonsteroidal anti-inflammatory drug (NSAID) used for pain, fever, inflammation, and antiplatelet therapy.",
+      "content": "<h3>Mechanism</h3><p>Irreversibly inhibits cyclooxygenase (COX) enzymes, reducing prostaglandin and thromboxane synthesis.</p><h3>Clinical use</h3><p>Analgesic, antipyretic, anti-inflammatory, and low-dose antiplatelet for cardiovascular prevention.</p>",
+      "tags": [
+        "NSAID",
+        "COX",
+        "antiplatelet"
+      ]
+    },
+    {
+      "id": "mitophagy",
+      "type": "concept",
+      "title": "Mitophagy",
+      "summary": "Selective autophagic clearance of damaged mitochondria to maintain cellular homeostasis.",
+      "content": "<p>Mitophagy removes dysfunctional mitochondria through autophagosomes that fuse with lysosomes.</p>",
+      "tags": [
+        "autophagy",
+        "mitochondria"
+      ]
+    }
+  ]
+}
