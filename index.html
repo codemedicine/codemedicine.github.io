@@ -1,45 +1,548 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>code is for medicine — Tech Medical Encyclopedia</title>
-  <meta name="description" content="code is for medicine — a technology-styled medical encyclopedia. Educational resource." />
-  <link rel="stylesheet" href="assets/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>code is for medicine — Medical Knowledge Search</title>
+<meta name="description" content="code is for medicine — aggregated medical search across Europe PMC, ClinicalTrials.gov, Wikipedia, and openFDA. Educational only." />
+<style>
+:root{
+  --bg1: #030316; --bg2: #071022; --panel: #071228; --muted: #9fb0c8; --accent: #06b6d4; --accent2: #7c3aed;
+  --glass: rgba(255,255,255,0.03); --text: #e6f0fb; --card-border: rgba(255,255,255,0.03); --shadow: 0 10px 30px rgba(2,6,23,0.6); --radius: 12px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+.container{max-width:1200px;margin:28px auto;padding:20px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+.sidebar{background:linear-gradient(180deg,#061225,#041123);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
+.brand h1{margin:0;font-size:1.05rem}
+.brand p{margin:4px 0 0 0;color:var(--muted);font-size:0.85rem}
+.search-box{display:flex;gap:8px;margin-top:8px}
+.search-box input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+.search-box button{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);color:#042233;font-weight:700;cursor:pointer}
+.sources{margin-top:12px;display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:0.9rem}
+.sources label{display:flex;gap:8px;align-items:center}
+.side-note{margin-top:14px;color:var(--muted);font-size:0.85rem}
+.main{min-height:60vh}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.controls{display:flex;gap:8px;align-items:center}
+.select{padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
+.card{background:linear-gradient(180deg,#06112a,#041022);padding:16px;border-radius:12px;box-shadow:var(--shadow);border:1px solid var(--card-border)}
+.hint{color:var(--muted)}
+.results{margin-top:14px;display:grid;gap:12px}
+.result{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--card-border)}
+.result h3{margin:0;font-size:1.05rem}
+.result .meta{color:var(--muted);font-size:0.85rem;margin-top:6px}
+.result .summary{color:#bcd2e6;margin-top:8px}
+.pager{display:flex;gap:8px;align-items:center;margin-top:12px}
+.badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#e2e8f0;color:#042040;font-weight:700;margin-left:8px;font-size:0.82rem}
+.toolbar{display:flex;gap:8px;align-items:center}
+.btn-ghost{background:transparent;border:1px dashed rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200}
+.modal .inner{max-width:900px;width:100%;background:linear-gradient(180deg,#071226,#051121);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+.kv{font-weight:700;color:var(--muted);margin-right:6px}
+.footer{margin-top:18px;color:var(--muted);font-size:0.85rem;text-align:center}
+.small{font-size:0.85rem;color:var(--muted)}
+.search-suggestions{position:absolute;background:#071226;border:1px solid rgba(255,255,255,0.03);border-radius:8px;margin-top:6px;overflow:auto;max-height:200px;width:calc(100% - 36px);z-index:30}
+.suggestion{padding:8px;cursor:pointer}
+.suggestion:hover{background:rgba(255,255,255,0.02)}
+.warn{color:#ffb3b3;margin-top:8px}
+@media (max-width:980px){.container{grid-template-columns:1fr;padding:12px}.sidebar{order:2}}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <aside class="sidebar">
-      <div class="brand"><div class="logo">CM</div><div class="brand-text"><h1>code is for medicine</h1><p class="sub">Tech Medical Encyclopedia</p></div></div>
-      <nav class="nav">
-        <input id="searchInput" placeholder="Search medical knowledge..." aria-label="search" />
-        <div class="filters">
-          <label><input type="checkbox" class="typefilter" value="organelle" checked /> Organelles</label>
-          <label><input type="checkbox" class="typefilter" value="disease" checked /> Diseases</label>
-          <label><input type="checkbox" class="typefilter" value="drug" checked /> Drugs</label>
-          <label><input type="checkbox" class="typefilter" value="concept" checked /> Concepts</label>
-        </div>
-        <div class="nav-list" id="indexList"></div>
-      </nav>
-      <footer class="sidefoot">
-        <small>Educational — not medical advice.</small>
-      </footer>
-    </aside>
+<div class="container" role="application">
+  <aside class="sidebar card" role="navigation" aria-label="sidebar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">CM</div>
+      <div>
+        <h1>code is for medicine</h1>
+        <p>Global Medical Knowledge Search</p>
+      </div>
+    </div>
 
-    <main class="main">
-      <header class="mainhead">
-        <div class="breadcrumbs" id="breadcrumbs">Home</div>
-        <div id="controls"><button id="viewAll" class="ghost">View All</button> <button id="exportBtn" class="ghost">Export Results</button></div>
-      </header>
+    <div style="position:relative">
+      <form id="searchForm" class="search-box" autocomplete="off">
+        <input id="q" name="q" placeholder="Search diseases, organelles, drugs, genes..." aria-label="Search" />
+        <button id="searchBtn" type="submit">Search</button>
+      </form>
+      <div id="suggestions" class="search-suggestions" style="display:none"></div>
+    </div>
 
-      <section id="content" class="content card">
-        <h2>Welcome — code is for medicine</h2>
-        <p class="lead">A technology-styled, searchable medical encyclopedia. Use the search box or browse the index on the left. This static site includes a curated dataset and client-side search so you can host it directly on GitHub Pages.</p>
-        <div class="grid" id="featured"></div>
-      </section>
-    </main>
-  </div>
+    <div class="sources card" aria-label="sources">
+      <label><input type="checkbox" class="src" value="europepmc" checked /> Europe PMC (articles)</label>
+      <label><input type="checkbox" class="src" value="clinicaltrials" checked /> ClinicalTrials.gov</label>
+      <label><input type="checkbox" class="src" value="wikipedia" checked /> Wikipedia</label>
+      <label><input type="checkbox" class="src" value="openfda" checked /> openFDA (drug labels)</label>
+    </div>
 
-  <script src="assets/app.js" defer></script>
+    <div class="side-note small">
+      Tips: If you see CORS errors, host this file via HTTP(S) (GitHub Pages or a local http server) or deploy a small proxy (Cloudflare Worker example provided below).
+    </div>
+  </aside>
+
+  <main>
+    <div class="header">
+      <div class="controls" role="toolbar">
+        <select id="sort" class="select" title="Sort">
+          <option value="priority">Smart priority</option>
+          <option value="time">Newest first</option>
+          <option value="source">Group by source</option>
+        </select>
+
+        <select id="perSource" class="select" title="Results per source">
+          <option value="5">5 per source</option>
+          <option value="10" selected>10 per source</option>
+          <option value="20">20 per source</option>
+        </select>
+
+        <button id="export" class="btn-ghost" title="Export displayed results as CSV">Export CSV</button>
+        <button id="bookmarks" class="btn-ghost" title="Open saved bookmarks">Bookmarks</button>
+      </div>
+
+      <div class="small">
+        <span id="status">Idle</span>
+        <span id="count" class="badge">0</span>
+      </div>
+    </div>
+
+    <div id="resultsPanel" class="card" role="region" aria-live="polite">
+      <div id="resultsInfo" class="small hint">Enter a query and press Search (or press Enter).</div>
+      <div id="results" class="results" aria-label="search results"></div>
+      <div class="pager" id="pager" style="display:none" role="navigation">
+        <button id="prev" class="btn-ghost">Previous</button>
+        <div id="pageInfo" class="small"></div>
+        <button id="next" class="btn-ghost">Next</button>
+      </div>
+    </div>
+
+    <div id="warningsBox" aria-live="polite"></div>
+
+    <div class="footer">
+      <small>Educational aggregator — not medical advice. Sources: Europe PMC, ClinicalTrials.gov, Wikipedia, openFDA.</small>
+    </div>
+  </main>
+</div>
+
+<div id="modal" style="display:none"></div>
+
+<script>
+/*
+  Updated robust single-file frontend to reduce CORS issues.
+  - Tries direct fetch; then tries multiple public CORS proxies in order.
+  - PROXY_OVERRIDE: set to your own proxy endpoint (e.g. Cloudflare Worker) to avoid public proxies.
+  - Important: hosting via HTTP(S) (GitHub Pages) is strongly recommended — file:// origin often causes issues with some proxies.
+*/
+
+const PROXY_OVERRIDE = ''; // <-- If you deploy your own CORS proxy, put its base URL here, e.g. 'https://my-proxy.example.workers.dev/?url='
+
+const CONFIG = {
+  timeout: 18000,
+  // list of public proxies to try (in order). You can reorder or add your own.
+  proxies: [
+    // prefer user-provided override (if set)
+    // popular proxies — public and may be rate-limited or disabled; keep multiple fallbacks
+    'https://corsproxy.io/?',               // tends to set CORS headers
+    'https://api.allorigins.win/raw?url=',  // common fallback
+    'https://thingproxy.freeboard.io/fetch/', // another proxy
+    'https://api.allorigins.win/raw?url='   // duplicate safe fallback
+  ],
+  sources: ['europepmc','clinicaltrials','wikipedia','openfda']
+};
+
+// If override provided, put it first
+if(PROXY_OVERRIDE && PROXY_OVERRIDE.trim()){
+  CONFIG.proxies.unshift(PROXY_OVERRIDE);
+}
+
+// Utility helpers
+function $(s){ return document.querySelector(s); }
+function $all(s){ return Array.from(document.querySelectorAll(s)); }
+function el(tag, attrs={}, ...children){ const e=document.createElement(tag); for(const k in attrs){ try{ e.setAttribute(k, attrs[k]); }catch{} } for(const c of children){ if(typeof c === 'string') e.appendChild(document.createTextNode(c)); else if(c) e.appendChild(c); } return e; }
+
+async function fetchWithTimeout(url, opts={}, ms=CONFIG.timeout){
+  const controller = new AbortController();
+  const id = setTimeout(()=>controller.abort(), ms);
+  try{
+    const r = await fetch(url, {...opts, signal: controller.signal});
+    clearTimeout(id);
+    return r;
+  }catch(e){
+    clearTimeout(id);
+    throw e;
+  }
+}
+
+// Try fetch directly; on failure try proxies sequentially.
+// NOTE: proxies may return HTML (error pages). We attempt to parse JSON and if parsing fails continue to next proxy.
+async function tryFetch(url, opts={}, allowProxies=true){
+  // First try direct
+  try{
+    const r = await fetchWithTimeout(url, opts);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r;
+  }catch(directErr){
+    // If origin is null (file://), provide a friendly message
+    if(location && location.protocol === 'file:'){
+      console.warn('You opened the page via file:// — some servers and proxies reject null origin. Serve via HTTP(S) instead (e.g. GitHub Pages or a local http server).');
+    }
+    if(!allowProxies) throw directErr;
+    // Try proxies in order
+    for(const p of CONFIG.proxies){
+      try{
+        const proxyUrl = p + encodeURIComponent(url);
+        const r2 = await fetchWithTimeout(proxyUrl, opts);
+        if(!r2.ok) { console.warn('proxy',p,'status',r2.status); continue; }
+        // Return the proxy response (we will attempt to parse JSON where needed)
+        return r2;
+      }catch(proxyErr){
+        console.warn('Proxy failed', p, proxyErr);
+        continue;
+      }
+    }
+    // none succeeded
+    throw directErr;
+  }
+}
+
+// Source fetchers
+async function fetchEuropePMC(q, pageSize=10){
+  const url = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${encodeURIComponent(q)}&format=json&pageSize=${pageSize}`;
+  const r = await tryFetch(url);
+  const j = await r.json();
+  const list = (j.resultList && j.resultList.result) || [];
+  return list.map(it=>({
+    source:'europepmc',
+    id: it.pmcid || it.pmid || it.doi || it.id,
+    title: it.title,
+    summary: it.abstractText || it.title || '',
+    url: it.pmid ? `https://pubmed.ncbi.nlm.nih.gov/${it.pmid}/` : (it.fullTextUrlList && it.fullTextUrlList.fullTextUrl && it.fullTextUrlList.fullTextUrl[0] && it.fullTextUrlList.fullTextUrl[0].url) || null,
+    date: it.pubYear || null
+  }));
+}
+
+async function fetchClinicalTrials(q, pageSize=5){
+  const url = `https://clinicaltrials.gov/api/query/study_fields?expr=${encodeURIComponent(q)}&fields=NCTId,BriefTitle,BriefSummary,Condition,StartDate&min_rnk=1&max_rnk=${pageSize}&fmt=json`;
+  const r = await tryFetch(url);
+  // clinicaltrials sometimes returns HTML on proxy fallback; try parse carefully
+  const text = await r.text();
+  try{
+    const j = JSON.parse(text);
+    const studies = (j.StudyFieldsResponse && j.StudyFieldsResponse.StudyFields) || [];
+    return studies.map(s=>({
+      source:'clinicaltrials',
+      id: (s.NCTId && s.NCTId[0]) || null,
+      title: (s.BriefTitle && s.BriefTitle[0]) || 'Clinical Trial',
+      summary: (s.BriefSummary && s.BriefSummary[0]) || '',
+      url: (s.NCTId && s.NCTId[0]) ? `https://clinicaltrials.gov/study/${s.NCTId[0]}` : null,
+      date: (s.StartDate && s.StartDate[0]) || null
+    }));
+  }catch(e){
+    // not JSON — return empty and surface warning
+    throw new Error('ClinicalTrials response not JSON (possible proxy HTML/blocked)');
+  }
+}
+
+async function fetchWikipedia(q, pageSize=5){
+  const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*&srlimit=${pageSize}`;
+  const r = await tryFetch(searchUrl);
+  const j = await r.json();
+  const results = (j.query && j.query.search) || [];
+  const promises = results.map(async item=>{
+    try{
+      const title = item.title;
+      const sumUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+      const rr = await tryFetch(sumUrl);
+      const sj = await rr.json();
+      return {
+        source:'wikipedia',
+        id: sj.title,
+        title: sj.title,
+        summary: sj.extract,
+        url: sj.content_urls && sj.content_urls.desktop && sj.content_urls.desktop.page
+      };
+    }catch(e){ return null; }
+  });
+  return (await Promise.all(promises)).filter(Boolean);
+}
+
+async function fetchOpenFDA(q, pageSize=3){
+  const encoded = encodeURIComponent(q);
+  const url = `https://api.fda.gov/drug/label.json?search=indications_and_usage:${encoded}&limit=${pageSize}`;
+  try{
+    const r = await tryFetch(url);
+    const j = await r.json();
+    return (j.results||[]).slice(0,pageSize).map(it=>({
+      source:'openfda',
+      id: it.set_id || null,
+      title: (it.openfda && (it.openfda.brand_name || it.openfda.generic_name) && (it.openfda.brand_name || it.openfda.generic_name)[0]) || it.spl_id || 'Drug label',
+      summary: (it.indications_and_usage && it.indications_and_usage[0]) || (it.purpose && it.purpose[0]) || '',
+      url: null
+    }));
+  }catch(e){
+    // try broader purpose search via proxy fallback attempts
+    try{
+      const url2 = `https://api.fda.gov/drug/label.json?search=purpose:${encoded}&limit=${pageSize}`;
+      const r2 = await tryFetch(url2);
+      const j2 = await r2.json();
+      return (j2.results||[]).slice(0,pageSize).map(it=>({
+        source:'openfda',
+        id: it.set_id || null,
+        title: (it.openfda && (it.openfda.brand_name || it.openfda.generic_name) && (it.openfda.brand_name || it.openfda.generic_name)[0]) || it.spl_id || 'Drug label',
+        summary: (it.indications_and_usage && it.indications_and_usage[0]) || (it.purpose && it.purpose[0]) || '',
+        url: null
+      }));
+    }catch(e2){
+      throw new Error('openFDA failed');
+    }
+  }
+}
+
+// aggregator helpers
+function dedupeMerge(arr){
+  const seen = new Set();
+  const out = [];
+  for(const it of arr){
+    const key = (it.source||'') + '::' + ((it.id || it.title || '').toLowerCase());
+    if(seen.has(key)) continue;
+    seen.add(key);
+    out.push(it);
+  }
+  return out;
+}
+function rankResults(arr, sort){
+  const priority = {'europepmc':0,'clinicaltrials':1,'openfda':2,'wikipedia':3};
+  if(sort === 'priority'){
+    arr.sort((a,b)=> (priority[a.source] - priority[b.source]) || 0);
+  } else if(sort === 'time'){
+    arr.sort((a,b)=> (b.date||'') > (a.date||'') ? 1 : -1);
+  } else if(sort === 'source'){
+    arr.sort((a,b)=> (a.source||'').localeCompare(b.source||''));
+  }
+  return arr;
+}
+
+// UI & state
+let STATE = { q:'', page:0, perPage:10, sort:'priority', results:[] };
+const UI = {
+  q: $('#q'), form: $('#searchForm'), resultsEl: $('#results'), status: $('#status'), count: $('#count'),
+  perSource: $('#perSource'), sort: $('#sort'), exportBtn: $('#export'), bookmarksBtn: $('#bookmarks'),
+  pager: $('#pager'), prev: $('#prev'), next: $('#next'), pageInfo: $('#pageInfo'), suggestions: $('#suggestions'),
+  resultsInfo: $('#resultsInfo'), warningsBox: $('#warningsBox')
+};
+
+function setStatus(t){ UI.status.textContent = t; }
+function setCount(n){ UI.count.textContent = n; }
+
+// Suggestion (Wikipedia opensearch)
+let suggestTimer = null;
+UI.q.addEventListener('input', ()=>{
+  const v = UI.q.value.trim();
+  if(suggestTimer) clearTimeout(suggestTimer);
+  if(v.length < 2){ UI.suggestions.style.display = 'none'; return; }
+  suggestTimer = setTimeout(async ()=>{
+    try{
+      const url = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(v)}&limit=8&namespace=0&format=json&origin=*`;
+      const r = await tryFetch(url);
+      const j = await r.json();
+      const arr = j[1] || [];
+      UI.suggestions.innerHTML = '';
+      if(arr.length === 0){ UI.suggestions.style.display='none'; return; }
+      arr.forEach(s=>{
+        const node = el('div',{class:'suggestion'}, s);
+        node.addEventListener('click', ()=>{ UI.q.value = s; UI.suggestions.style.display='none'; UI.form.requestSubmit(); });
+        UI.suggestions.appendChild(node);
+      });
+      UI.suggestions.style.display = 'block';
+    }catch(e){
+      UI.suggestions.style.display = 'none';
+    }
+  }, 240);
+});
+
+// bookmarks
+function loadBookmarks(){ try{ return JSON.parse(localStorage.getItem('cm_bookmarks')||'[]'); }catch(e){ return []; } }
+function saveBookmarks(arr){ localStorage.setItem('cm_bookmarks', JSON.stringify(arr)); }
+function toggleBookmark(item){
+  const list = loadBookmarks();
+  const exists = list.find(x=>x.source===item.source && (x.id||x.title) === (item.id||item.title));
+  if(exists){
+    const n = list.filter(x=>!(x.source===item.source && (x.id||x.title)===(item.id||item.title)));
+    saveBookmarks(n);
+    alert('Removed bookmark');
+  } else {
+    list.unshift(item);
+    saveBookmarks(list.slice(0,200));
+    alert('Saved bookmark');
+  }
+}
+
+// rendering results — careful with variable names to avoid conflicts
+function renderResultsPage(page=0){
+  const containerEl = UI.resultsEl;
+  containerEl.innerHTML = '';
+  const per = STATE.perPage;
+  const start = page * per;
+  const slice = STATE.results.slice(start, start+per);
+  if(STATE.results.length === 0){
+    UI.resultsInfo.textContent = 'No results. Try a different query or enable more sources.';
+    UI.pager.style.display = 'none';
+    setCount(0);
+    return;
+  }
+  UI.resultsInfo.textContent = '';
+  slice.forEach(r=>{
+    const node = el('div',{class:'result'});
+    const h = el('h3',{}, el('a',{href: r.url||'#', target:'_blank', rel:'noreferrer'}, r.title || r.id || '(no title)'));
+    node.appendChild(h);
+    const meta = el('div',{class:'meta'}, `${r.source} ${r.id ? ' · ' + r.id : ''}`);
+    node.appendChild(meta);
+    if(r.summary) node.appendChild(el('div',{class:'summary'}, r.summary));
+    const actions = el('div',{style:'margin-top:8px;display:flex;gap:8px'});
+    const btnView = el('button', {class:'btn-ghost'}, 'View');
+    btnView.addEventListener('click', ()=> openDetail(r));
+    const btnCopy = el('button', {class:'btn-ghost'}, 'Copy Citation');
+    btnCopy.addEventListener('click', ()=> copyCitation(r));
+    const btnSave = el('button', {class:'btn-ghost'}, 'Bookmark');
+    btnSave.addEventListener('click', ()=> toggleBookmark(r));
+    actions.appendChild(btnView); actions.appendChild(btnCopy); actions.appendChild(btnSave);
+    node.appendChild(actions);
+    containerEl.appendChild(node);
+  });
+  const totalPages = Math.ceil(STATE.results.length / per);
+  UI.pager.style.display = totalPages > 1 ? 'flex' : 'none';
+  UI.pageInfo.textContent = `Page ${page+1} / ${totalPages}`;
+  UI.prev.disabled = (page===0);
+  UI.next.disabled = (page >= totalPages-1);
+  setCount(STATE.results.length);
+}
+
+// detail modal
+function openDetail(item){
+  const modal = $('#modal');
+  modal.innerHTML = '';
+  const inner = el('div',{class:'modal'}, el('div',{class:'inner'},
+    el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('h2',{}, item.title || item.id), el('button',{class:'btn-ghost', onclick:'document.getElementById(\"modal\").style.display=\"none\"'}, 'Close')),
+    el('div',{class:'small'}, `${item.source} ${item.id?('· '+item.id):''}`),
+    el('div',{style:'margin-top:12px'}, el('div',{innerHTML: item.summary || '(no summary)'})),
+    el('div',{style:'margin-top:12px;display:flex;gap:8px'},
+      el('a',{class:'btn-ghost', href:item.url||'#', target:'_blank', rel:'noreferrer'}, 'Open original'),
+      el('button',{class:'btn-ghost', id:'copyJsonBtn'}, 'Copy JSON')
+    )
+  ));
+  modal.appendChild(inner);
+  modal.style.display = 'block';
+  document.getElementById('copyJsonBtn').addEventListener('click', ()=>{
+    navigator.clipboard.writeText(JSON.stringify(item,null,2));
+    alert('Copied JSON to clipboard');
+  });
+}
+
+function copyCitation(item){
+  const cite = `${item.title || item.id} — ${item.source}${item.id?(' · ' + item.id):''}${item.url?(' — '+item.url):''}`;
+  navigator.clipboard.writeText(cite).then(()=> alert('Citation copied'));
+}
+
+function exportCSV(list){
+  const rows = [['source','id','title','summary','url','date']];
+  for(const it of list) rows.push([it.source||'', it.id||'', (it.title||'').replace(/"/g,'""'), (it.summary||'').replace(/"/g,'""'), it.url||'', it.date||'']);
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download='codemedicine_results.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+// main search flow
+async function doSearch(q){
+  if(!q || q.trim().length < 2){ alert('Enter at least 2 characters'); return; }
+  STATE.q = q.trim();
+  STATE.perPage = parseInt(UI.perSource.value,10);
+  STATE.sort = UI.sort.value;
+  setStatus('Searching…');
+  UI.resultsEl.innerHTML = '';
+  UI.warningsBox.innerHTML = '';
+  const enabled = $all('.src:checked').map(n=>n.value);
+  const perSource = parseInt(UI.perSource.value,10);
+  const tasks = [];
+  const warnings = [];
+  if(enabled.includes('europepmc')) tasks.push(fetchEuropePMC(q, perSource).catch(e=>{ warnings.push('Europe PMC: '+e.message); return []; }));
+  if(enabled.includes('clinicaltrials')) tasks.push(fetchClinicalTrials(q, Math.min(perSource,10)).catch(e=>{ warnings.push('ClinicalTrials: '+e.message); return []; }));
+  if(enabled.includes('wikipedia')) tasks.push(fetchWikipedia(q, Math.min(perSource,8)).catch(e=>{ warnings.push('Wikipedia: '+e.message); return []; }));
+  if(enabled.includes('openfda')) tasks.push(fetchOpenFDA(q, Math.min(perSource,5)).catch(e=>{ warnings.push('openFDA: '+e.message); return []; }));
+
+  const start = performance.now();
+  const resultsArr = await Promise.all(tasks);
+  const merged = [].concat(...resultsArr);
+  const dedup = dedupeMerge(merged);
+  const ranked = rankResults(dedup, STATE.sort);
+  STATE.results = ranked;
+  STATE.page = 0;
+  renderResultsPage(STATE.page);
+  const took = Math.round(performance.now() - start);
+  setStatus(`Done in ${took} ms`);
+  if(warnings.length){
+    UI.warningsBox.appendChild(el('div',{class:'warn'}, 'Warnings: ' + warnings.join('; ')));
+  }
+}
+
+// event wiring
+UI.form.addEventListener('submit', async (ev)=>{
+  ev.preventDefault();
+  UI.suggestions.style.display='none';
+  await doSearch(UI.q.value);
+});
+UI.prev.addEventListener('click', ()=> { if(STATE.page>0){ STATE.page--; renderResultsPage(STATE.page); } });
+UI.next.addEventListener('click', ()=> { const total = Math.ceil(STATE.results.length / STATE.perPage); if(STATE.page < total-1){ STATE.page++; renderResultsPage(STATE.page); } });
+UI.exportBtn.addEventListener('click', ()=> exportCSV(STATE.results));
+UI.bookmarksBtn.addEventListener('click', ()=> {
+  const b = loadBookmarks();
+  if(b.length===0) return alert('No bookmarks');
+  const modal = $('#modal'); modal.innerHTML = ''; const list = el('div',{class:'modal'}, el('div',{class:'inner'}, el('h3',{}, 'Bookmarks')));
+  b.forEach(it=> { list.querySelector('.inner').appendChild(el('div',{}, el('strong',{}, it.title||it.id), el('div',{class:'small'}, it.source))); });
+  modal.appendChild(list); modal.style.display='block';
+});
+
+// prefill q from ?q= in URL
+(function prefill(){
+  const params = new URLSearchParams(location.search);
+  if(params.has('q')){
+    UI.q.value = params.get('q');
+    setTimeout(()=> UI.form.requestSubmit(), 200);
+  }
+})();
+
+</script>
+
+<!--
+ OPTIONAL: Cloudflare Worker proxy example (recommended to eliminate CORS issues)
+ Deploy this small worker and set PROXY_OVERRIDE to 'https://<your-worker-domain>/?url='
+
+ add worker code:
+
+addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  const target = url.searchParams.get('url');
+  if(!target) return event.respondWith(new Response('Missing url param', {status:400}));
+  return event.respondWith(fetchAndFix(target, event.request));
+});
+
+async function fetchAndFix(target, req) {
+  const res = await fetch(target, {method: 'GET', headers: {'User-Agent': 'CodeMedicine/1.0'}}).catch(e => null);
+  if(!res) return new Response('Upstream fetch failed', {status:502});
+  const headers = new Headers(res.headers);
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, Accept');
+  const body = await res.arrayBuffer();
+  return new Response(body, {status: res.status, headers});
+}
+
+ Deploy steps (summary):
+ 1. Create a Cloudflare Workers account (free tier available).
+ 2. Create a new Worker, paste the above code, deploy.
+ 3. Use the Worker URL like `https://<your-worker>.workers.dev/?url=` and set PROXY_OVERRIDE in this HTML to that URL.
+ This gives you a stable proxy with proper CORS headers.
+-->
+
 </body>
 </html>
